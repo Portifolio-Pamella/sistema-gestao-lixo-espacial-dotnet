@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Aegis.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d89cd0ebe36f436efd65f7c21431105c4e6c857a")]
 [assembly: System.Reflection.AssemblyProductAttribute("Aegis.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Aegis.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
