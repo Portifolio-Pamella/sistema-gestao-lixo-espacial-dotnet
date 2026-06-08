@@ -30,7 +30,6 @@ builder.Services.AddScoped<IAlertaService, AlertaService>();
 builder.Services.AddScoped<IMissaoService, MissaoService>();
 
 // 4. Configuração de Controllers e JSON
-// ReferenceHandler.IgnoreCycles é vital para evitar erros de loop infinito com EF Core
 builder.Services.AddControllers()
     .AddJsonOptions(x =>
         x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
@@ -40,15 +39,37 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    int maxRetries = 15;
+    bool connected = false;
 
-// 6. Configuração do Pipeline (Middleware)
+    while (maxRetries > 0 && !connected)
+    {
+        try
+        {
+            Console.WriteLine($"Tentando conectar ao banco... ({maxRetries} tentativas restantes)");
+            context.Database.OpenConnection();
+            context.Database.EnsureCreated(); // Cria as tabelas se necessário
+            context.Database.CloseConnection();
+            Console.WriteLine("Banco de dados pronto!");
+            connected = true;
+        }
+        catch (Exception ex)
+        {
+            maxRetries--;
+            Console.WriteLine($"Aguardando banco Oracle subir... Erro: {ex.Message.Substring(0, 30)}...");
+            Thread.Sleep(10000); // Espera 10 segundos antes de tentar de novo
+        }
+    }
+}
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
