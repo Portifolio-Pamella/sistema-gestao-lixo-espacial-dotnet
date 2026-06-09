@@ -1,4 +1,4 @@
-readme_content = """# 🛰️ AEGIS - Plataforma de Gestão de Lixo Espacial
+🛰️ AEGIS - Plataforma de Gestão de Lixo Espacial
 
 Bem-vindo ao repositório do **Projeto AEGIS**. Uma solução dedicada à otimização da segurança orbital, monitorização e gestão inteligente de detritos espaciais.
 
