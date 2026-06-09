@@ -11,7 +11,10 @@ namespace Aegis.Api.Data.Mappings
             builder.ToTable("TB_ALERTA_COLISAO");
 
             builder.HasKey(a => a.Id);
-            builder.Property(a => a.Id).HasColumnName("ID_ALERTA");
+
+            builder.Property(a => a.Id)
+                .HasColumnName("ID_ALERTA")
+                .ValueGeneratedOnAdd();
 
             builder.Property(a => a.SateliteId)
                 .HasColumnName("ID_SATELITE")
@@ -26,13 +29,12 @@ namespace Aegis.Api.Data.Mappings
                 .HasMaxLength(20)
                 .IsRequired();
 
-            // Relacionamentos
             builder.HasOne(a => a.Satelite)
                 .WithMany(s => s.Alertas)
                 .HasForeignKey(a => a.SateliteId);
 
             builder.HasOne(a => a.Detrito)
-                .WithMany() // Assumindo que DetritoEspacial não tem uma lista de Alertas
+                .WithMany()
                 .HasForeignKey(a => a.DetritoId);
         }
     }

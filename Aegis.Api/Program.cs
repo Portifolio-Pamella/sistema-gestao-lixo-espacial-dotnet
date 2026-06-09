@@ -13,7 +13,7 @@ var connectionString = builder.Configuration.GetConnectionString("OracleConnecti
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseOracle(connectionString));
 
-// 2. Registro de Repositórios (Injeção de Dependência)
+// 2. Registro de Repositórios
 builder.Services.AddScoped<IEmpresaRepository, EmpresaRepository>();
 builder.Services.AddScoped<ISateliteRepository, SateliteRepository>();
 builder.Services.AddScoped<IDetritoRepository, DetritoRepository>();
@@ -21,7 +21,7 @@ builder.Services.AddScoped<IChaserRepository, ChaserRepository>();
 builder.Services.AddScoped<IAlertaRepository, AlertaRepository>();
 builder.Services.AddScoped<IMissaoRepository, MissaoRepository>();
 
-// 3. Registro de Services (Injeção de Dependência)
+// 3. Registro de Services
 builder.Services.AddScoped<IEmpresaService, EmpresaService>();
 builder.Services.AddScoped<ISateliteService, SateliteService>();
 builder.Services.AddScoped<IDetritoService, DetritoService>();
@@ -30,7 +30,6 @@ builder.Services.AddScoped<IAlertaService, AlertaService>();
 builder.Services.AddScoped<IMissaoService, MissaoService>();
 
 // 4. Configuração de Controllers e JSON
-// ReferenceHandler.IgnoreCycles é vital para evitar erros de loop infinito com EF Core
 builder.Services.AddControllers()
     .AddJsonOptions(x =>
         x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
@@ -40,6 +39,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+// --- NOVO: MIGRATION AUTOMÁTICA ---
+// Isso garante que ao iniciar a API, o banco seja atualizado/criado automaticamente
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    dbContext.Database.Migrate();
+}
 
 // 6. Configuração do Pipeline (Middleware)
 if (app.Environment.IsDevelopment())

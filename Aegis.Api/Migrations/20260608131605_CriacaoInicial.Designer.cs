@@ -12,7 +12,7 @@ using Oracle.EntityFrameworkCore.Metadata;
 namespace Aegis.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260603032111_CriacaoInicial")]
+    [Migration("20260608131605_CriacaoInicial")]
     partial class CriacaoInicial
     {
         /// <inheritdoc />
@@ -76,8 +76,9 @@ namespace Aegis.Api.Migrations
                         .HasColumnName("NUM_BATERIA");
 
                     b.Property<decimal>("CoordenadaX")
-                        .HasColumnType("DECIMAL(18, 2)")
-                        .HasColumnName("TXT_COORDENADA_X");
+                        .HasPrecision(18, 4)
+                        .HasColumnType("DECIMAL(18,4)")
+                        .HasColumnName("COORDENADA_Z");
 
                     b.Property<decimal>("CoordenadaY")
                         .HasColumnType("DECIMAL(18, 2)")
@@ -120,7 +121,8 @@ namespace Aegis.Api.Migrations
                         .HasColumnName("TXT_COORDENADA_Z");
 
                     b.Property<decimal>("MassaKg")
-                        .HasColumnType("DECIMAL(18, 2)")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("DECIMAL(18,4)")
                         .HasColumnName("MASSA_KG");
 
                     b.Property<string>("Nome")
@@ -193,9 +195,6 @@ namespace Aegis.Api.Migrations
                         .HasColumnType("NUMBER(10)")
                         .HasColumnName("ID_CHASER");
 
-                    b.Property<int?>("ChaserId1")
-                        .HasColumnType("NUMBER(10)");
-
                     b.Property<DateTime>("DataExecucao")
                         .HasColumnType("TIMESTAMP(7)")
                         .HasColumnName("DATA_EXECUCAO");
@@ -211,8 +210,6 @@ namespace Aegis.Api.Migrations
                     b.HasIndex("AlertaId");
 
                     b.HasIndex("ChaserId");
-
-                    b.HasIndex("ChaserId1");
 
                     b.ToTable("TB_MISSAO_INTERCEPTACAO", (string)null);
                 });
@@ -279,14 +276,10 @@ namespace Aegis.Api.Migrations
                         .IsRequired();
 
                     b.HasOne("Aegis.Api.Models.Chaser", "Chaser")
-                        .WithMany()
+                        .WithMany("Missoes")
                         .HasForeignKey("ChaserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Aegis.Api.Models.Chaser", null)
-                        .WithMany("Missoes")
-                        .HasForeignKey("ChaserId1");
 
                     b.Navigation("Alerta");
 

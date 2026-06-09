@@ -31,7 +31,6 @@ namespace Aegis.Api.Repositories
 
         public async Task AddAsync(AlertaColisao alerta)
         {
-            // Limpa propriedades de navegação para evitar duplicações no EF
             alerta.Satelite = null;
             alerta.Detrito = null;
 

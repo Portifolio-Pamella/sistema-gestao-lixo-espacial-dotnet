@@ -19,7 +19,7 @@ namespace Aegis.Api.Migrations
                         .Annotation("Oracle:Identity", "START WITH 1 INCREMENT BY 1"),
                     NOME_CHASER = table.Column<string>(type: "NVARCHAR2(50)", maxLength: 50, nullable: false),
                     NUM_BATERIA = table.Column<decimal>(type: "DECIMAL(18, 2)", nullable: false),
-                    TXT_COORDENADA_X = table.Column<decimal>(type: "DECIMAL(18, 2)", nullable: false),
+                    COORDENADA_Z = table.Column<decimal>(type: "DECIMAL(18,4)", precision: 18, scale: 4, nullable: false),
                     TXT_COORDENADA_Y = table.Column<decimal>(type: "DECIMAL(18, 2)", nullable: false),
                     TXT_COORDENADA_Z = table.Column<decimal>(type: "DECIMAL(18, 2)", nullable: false)
                 },
@@ -35,7 +35,7 @@ namespace Aegis.Api.Migrations
                     ID_DETRITO = table.Column<int>(type: "NUMBER(10)", nullable: false)
                         .Annotation("Oracle:Identity", "START WITH 1 INCREMENT BY 1"),
                     NOME_DETRITO = table.Column<string>(type: "NVARCHAR2(100)", maxLength: 100, nullable: false),
-                    MASSA_KG = table.Column<decimal>(type: "DECIMAL(18, 2)", nullable: false),
+                    MASSA_KG = table.Column<decimal>(type: "DECIMAL(18,4)", precision: 18, scale: 4, nullable: false),
                     TAMANHO_METROS = table.Column<decimal>(type: "DECIMAL(18, 2)", nullable: false),
                     TXT_COORDENADA_X = table.Column<decimal>(type: "DECIMAL(18, 2)", nullable: false),
                     TXT_COORDENADA_Y = table.Column<decimal>(type: "DECIMAL(18, 2)", nullable: false),
@@ -125,8 +125,7 @@ namespace Aegis.Api.Migrations
                     ID_ALERTA = table.Column<int>(type: "NUMBER(10)", nullable: false),
                     ID_CHASER = table.Column<int>(type: "NUMBER(10)", nullable: false),
                     DATA_EXECUCAO = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
-                    STATUS_MISSAO = table.Column<string>(type: "NVARCHAR2(20)", maxLength: 20, nullable: false),
-                    ChaserId1 = table.Column<int>(type: "NUMBER(10)", nullable: true)
+                    STATUS_MISSAO = table.Column<string>(type: "NVARCHAR2(20)", maxLength: 20, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -137,11 +136,6 @@ namespace Aegis.Api.Migrations
                         principalTable: "TB_ALERTA_COLISAO",
                         principalColumn: "ID_ALERTA",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TB_MISSAO_INTERCEPTACAO_TB_CHASER_ChaserId1",
-                        column: x => x.ChaserId1,
-                        principalTable: "TB_CHASER",
-                        principalColumn: "ID_CHASER");
                     table.ForeignKey(
                         name: "FK_TB_MISSAO_INTERCEPTACAO_TB_CHASER_ID_CHASER",
                         column: x => x.ID_CHASER,
@@ -164,11 +158,6 @@ namespace Aegis.Api.Migrations
                 name: "IX_TB_ALERTA_COLISAO_ID_SATELITE",
                 table: "TB_ALERTA_COLISAO",
                 column: "ID_SATELITE");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TB_MISSAO_INTERCEPTACAO_ChaserId1",
-                table: "TB_MISSAO_INTERCEPTACAO",
-                column: "ChaserId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TB_MISSAO_INTERCEPTACAO_ID_ALERTA",

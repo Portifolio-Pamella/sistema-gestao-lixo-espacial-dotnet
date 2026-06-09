@@ -15,7 +15,7 @@ namespace Aegis.Api.Repositories
         {
             return await _context.Chasers
                 .AsNoTracking()
-                .Include(c => c.Missoes) // Carrega as missões relacionadas
+                .Include(c => c.Missoes) 
                 .ToListAsync();
         }
 
