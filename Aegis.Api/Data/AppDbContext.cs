@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Aegis.Api.Models;
-using Aegis.Api.Data.Mappings; // Importante: importar o namespace dos mappings
+using Aegis.Api.Data.Mappings;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Aegis.Api.Data
 {
@@ -8,7 +9,6 @@ namespace Aegis.Api.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        // Tabelas do Banco de Dados
         public DbSet<Empresa> Empresas { get; set; }
         public DbSet<Satelite> Satelites { get; set; }
         public DbSet<DetritoEspacial> Detritos { get; set; }
@@ -20,14 +20,28 @@ namespace Aegis.Api.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // --- APLICAÇÃO DOS MAPPINGS ---
-            // Ao invés de configurar aqui dentro, chamamos cada classe de Mapping
-            modelBuilder.ApplyConfiguration(new EmpresaMapping());
-            modelBuilder.ApplyConfiguration(new SateliteMapping());
-            modelBuilder.ApplyConfiguration(new DetritoEspacialMapping());
-            modelBuilder.ApplyConfiguration(new ChaserMapping());
-            modelBuilder.ApplyConfiguration(new AlertaColisaoMapping());
-            modelBuilder.ApplyConfiguration(new MissaoInterceptacaoMapping());
+            // 1. Aplica seus mappings manuais (se existirem)
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+            // 2. CONFIGURAÇÃO GLOBAL PARA ORACLE 11g
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                // Desativa IDENTITY para todos os IDs (evita ORA-02000)
+                var idProperty = entityType.FindProperty("Id");
+                if (idProperty != null)
+                {
+                    idProperty.ValueGenerated = ValueGenerated.Never;
+                }
+
+                // Corrige precisão de todos os decimais (evita warnings)
+                foreach (var property in entityType.GetProperties())
+                {
+                    if (property.ClrType == typeof(decimal))
+                    {
+                        property.SetPrecision(18);
+                        property.SetScale(2);
+                    }
+                }
+            }
         }
     }
 }
