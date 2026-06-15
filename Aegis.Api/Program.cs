@@ -39,13 +39,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    int maxRetries = 15;
-    bool connected = false;
 
-// --- NOVO: MIGRATION AUTOMÁTICA ---
+// --- MIGRATION AUTOMÁTICA ---
 // Isso garante que ao iniciar a API, o banco seja atualizado/criado automaticamente
 using (var scope = app.Services.CreateScope())
 {
